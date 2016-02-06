@@ -673,7 +673,12 @@ void DataManager::SetDefaultValues()
 #else
 	mConstValues.insert(make_pair(TW_REBOOT_RECOVERY, "1"));
 #endif
+#ifdef TW_NO_REBOOT_POWEROFF
+	printf("TW_NO_REBOOT_POWEROFF := true\n");
+	mConstValues.insert(make_pair(TW_REBOOT_POWEROFF, "0"));
+#else
 	mConstValues.insert(make_pair(TW_REBOOT_POWEROFF, "1"));
+#endif
 #ifdef TW_NO_REBOOT_BOOTLOADER
 	printf("TW_NO_REBOOT_BOOTLOADER := true\n");
 	mConstValues.insert(make_pair(TW_REBOOT_BOOTLOADER, "0"));
