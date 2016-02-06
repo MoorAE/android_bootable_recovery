@@ -349,7 +349,25 @@ int main(int argc, char **argv) {
 	PartitionManager.Disable_MTP();
 #endif
 
-#ifndef TW_OEM_BUILD
+#ifdef TW_AMAZON_FIRETV
+	struct stat sb;
+	DataManager::SetValue("tw_bootmenu_highlight",
+		(stat("/cache/bootmenu_recovery", &sb) == -1) ? "android" : "recovery");
+	ev_in_bootmenu(true);
+	if (gui_startPage("bootmenu", 1, 1) != 0)
+	{
+		LOGERR("Failed to start bootmenu GUI page.\n");
+	}
+	ev_in_bootmenu(false);
+	string bootmenu_highlight;
+	DataManager::GetValue("tw_bootmenu_highlight", bootmenu_highlight);
+	if (bootmenu_highlight == "android")
+	{
+		close(creat("/cache/bypass_2ndinit", 0666));
+		TWFunc::tw_reboot(rb_system);
+		return 0;
+	}
+#elif !defined(TW_OEM_BUILD)
 	// Check if system has never been changed
 	TWPartition* sys = PartitionManager.Find_Partition_By_Path("/system");
 	TWPartition* ven = PartitionManager.Find_Partition_By_Path("/vendor");

@@ -199,6 +199,9 @@ GUIAction::GUIAction(xml_node<>* node)
 		ADD_ACTION(checkpartitionlifetimewrites);
 		ADD_ACTION(mountsystemtoggle);
 		ADD_ACTION(setlanguage);
+#ifdef TW_AMAZON_FIRETV
+		ADD_ACTION(bootmenu_highlight);
+#endif
 
 		// remember actions that run in the caller thread
 		for (mapFunc::const_iterator it = mf.begin(); it != mf.end(); ++it)
@@ -229,6 +232,9 @@ GUIAction::GUIAction(xml_node<>* node)
 		ADD_ACTION(changefilesystem);
 		ADD_ACTION(flashimage);
 		ADD_ACTION(twcmd);
+#ifdef TW_AMAZON_FIRETV
+		ADD_ACTION(bootmenu);
+#endif
 	}
 
 	// First, get the action
@@ -1845,3 +1851,30 @@ int GUIAction::setlanguage(std::string arg __unused)
 	operation_end(op_status);
 	return 0;
 }
+
+#ifdef TW_AMAZON_FIRETV
+int GUIAction::bootmenu(std::string arg __unused)
+{
+	DataManager::SetValue("ui_progress_frames", 0);
+
+	// 100% shows as a weird color, this fixes it
+	DataManager::SetProgress(0);
+	usleep(30000);
+
+	for (int i = 5; i >= 0; i--)
+	{
+		DataManager::SetProgress(i / 5.0);
+		usleep(1000000);
+	}
+
+	DataManager::SetValue("tw_page_done", 1);
+
+	return 0;
+}
+
+int GUIAction::bootmenu_highlight(std::string arg)
+{
+	DataManager::SetValue("tw_bootmenu_highlight", arg);
+	return 0;
+}
+#endif

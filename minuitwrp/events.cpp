@@ -102,6 +102,9 @@ static struct ev evs[MAX_DEVICES];
 static unsigned ev_count = 0;
 static struct timeval lastInputStat;
 static unsigned long lastInputMTime;
+#ifdef TW_AMAZON_FIRETV
+static bool in_bootmenu = false;
+#endif
 static int has_mouse = 0;
 
 static inline int ABS(int x) {
@@ -300,9 +303,21 @@ static void check_mouse(int fd)
 	has_mouse = 1;
 }
 
+#ifdef TW_AMAZON_FIRETV
+void ev_in_bootmenu(bool value)
+{
+	in_bootmenu = value;
+}
+#endif
+
 int ev_has_mouse(void)
 {
+#ifdef TW_AMAZON_FIRETV
+	// Firetv always has mouse except in bootmenu
+	return !in_bootmenu;
+#else
 	return has_mouse;
+#endif
 }
 
 int ev_init(void)

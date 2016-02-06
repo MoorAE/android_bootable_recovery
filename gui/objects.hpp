@@ -358,6 +358,10 @@ protected:
 	int mountsystemtoggle(std::string arg);
 	int setlanguage(std::string arg);
 	int twcmd(std::string arg);
+#ifdef TW_AMAZON_FIRETV
+	int bootmenu(std::string arg);
+	int bootmenu_highlight(std::string arg);
+#endif
 
 	int simulate;
 };

@@ -80,6 +80,7 @@ struct input_event;
 int ev_init(void);
 void ev_exit(void);
 int ev_get(struct input_event *ev, int timeout_ms);
+extern "C" void ev_in_bootmenu(bool value);
 int ev_has_mouse(void);
 
 // Resources
