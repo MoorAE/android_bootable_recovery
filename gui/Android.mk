@@ -70,6 +70,9 @@ endif
 ifeq ($(TW_ROUND_SCREEN), true)
     LOCAL_CFLAGS += -DTW_ROUND_SCREEN
 endif
+ifneq ($(TW_AMAZON_FIRETV),)
+    LOCAL_CFLAGS += -DTW_AMAZON_FIRETV
+endif
 
 LOCAL_C_INCLUDES += bionic system/core/libpixelflinger/include
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 23; echo $$?),0)
