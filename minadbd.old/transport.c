@@ -32,6 +32,11 @@ static atransport transport_list = {
     .prev = &transport_list,
 };
 
+static atransport pending_list = {
+    .next = &pending_list,
+    .prev = &pending_list,
+};
+
 ADB_MUTEX_DEFINE( transport_lock );
 
 #if ADB_TRACE
@@ -676,6 +681,50 @@ retry:
     }
 
     return result;
+}
+
+int register_socket_transport(int s, const char *serial, int port, int local)
+{
+    atransport *t = calloc(1, sizeof(atransport));
+    atransport *n;
+    char buff[32];
+
+    if (!serial) {
+        snprintf(buff, sizeof buff, "T-%p", t);
+        serial = buff;
+    }
+    D("transport: %s init'ing for socket %d, on port %d\n", serial, s, port);
+    if (init_socket_transport(t, s, port, local) < 0) {
+        free(t);
+        return -1;
+    }
+
+    adb_mutex_lock(&transport_lock);
+    for (n = pending_list.next; n != &pending_list; n = n->next) {
+        if (n->serial && !strcmp(serial, n->serial)) {
+            adb_mutex_unlock(&transport_lock);
+            free(t);
+            return -1;
+        }
+    }
+
+    for (n = transport_list.next; n != &transport_list; n = n->next) {
+        if (n->serial && !strcmp(serial, n->serial)) {
+            adb_mutex_unlock(&transport_lock);
+            free(t);
+            return -1;
+        }
+    }
+
+    t->next = &pending_list;
+    t->prev = pending_list.prev;
+    t->next->prev = t;
+    t->prev->next = t;
+    t->serial = strdup(serial);
+    adb_mutex_unlock(&transport_lock);
+
+    register_transport(t);
+    return 0;
 }
 
 void register_usb_transport(usb_handle *usb, const char *serial, unsigned writeable)

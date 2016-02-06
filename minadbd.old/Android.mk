@@ -15,6 +15,7 @@ LOCAL_SRC_FILES := \
 	fdevent.c \
 	fuse_adb_provider.c \
 	transport.c \
+	transport_local.c \
 	transport_usb.c \
 	sockets.c \
 	services.c \
