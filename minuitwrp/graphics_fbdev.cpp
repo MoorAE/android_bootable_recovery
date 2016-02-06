@@ -214,6 +214,7 @@ static GRSurface* fbdev_init(minui_backend* backend) {
         return NULL;
     }
 
+#ifndef TW_DISABLE_DOUBLE_BUFFERING
     /* check if we can use double buffering */
     if (vi.yres * fi.line_length * 2 <= fi.smem_len) {
         double_buffered = true;
@@ -227,6 +228,11 @@ static GRSurface* fbdev_init(minui_backend* backend) {
         double_buffered = false;
         printf("single buffered\n");
     }
+#else
+    double_buffered = false;
+    printf("TW_DISABLE_DOUBLE_BUFFERING := true\n");
+#endif
+
 #if defined(RECOVERY_BGRA)
     printf("RECOVERY_BGRA\n");
 #endif
