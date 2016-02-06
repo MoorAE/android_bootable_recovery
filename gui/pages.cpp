@@ -1099,7 +1099,11 @@ int PageSet::LoadPages(xml_node<>* pages)
 	child = pages->first_node("page");
 	while (child != NULL)
 	{
-		Page* page = new Page(child, &templates);
+		Page* page = FindPage(child->first_attribute("name")->value());
+		if (!page)
+			page = new Page(child, &templates);
+		else
+			page->ProcessNode(child, &templates, 0);
 		if (page->GetName().empty())
 		{
 			LOGERR("Unable to process load page\n");

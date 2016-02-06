@@ -73,6 +73,7 @@ public:
 	virtual int SetKeyBoardFocus(int inFocus);
 	virtual int NotifyVarChange(std::string varName, std::string value);
 	virtual void SetPageFocus(int inFocus);
+	bool ProcessNode(xml_node<>* page, std::vector<xml_node<>*> *templates, int depth);
 
 protected:
 	std::string mName;
@@ -83,9 +84,6 @@ protected:
 
 	ActionObject* mTouchStart;
 	COLOR mBackground;
-
-protected:
-	bool ProcessNode(xml_node<>* page, std::vector<xml_node<>*> *templates, int depth);
 };
 
 class PageSet
