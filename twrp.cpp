@@ -21,6 +21,10 @@
 #include <time.h>
 #include <unistd.h>
 #include <signal.h>
+#ifdef TW_AMAZON_FIRETV
+#include <arpa/inet.h>
+#include <net/if.h>
+#endif
 #include "gui/twmsg.h"
 
 #include "cutils/properties.h"
@@ -258,6 +262,16 @@ int main(int argc, char **argv) {
 	TWFunc::check_and_run_script("/sbin/runatboot.sh", "boot");
 	TWFunc::check_and_run_script("/sbin/postrecoveryboot.sh", "boot");
 
+#ifdef TW_AMAZON_FIRETV
+	// DHCP runs in postrecoveryboot.sh, get the ip address
+	struct ifreq ifr = { 0 };
+	strcpy(ifr.ifr_name, "eth0");
+	int fd = socket(AF_INET, SOCK_DGRAM, 0);
+	ioctl(fd, SIOCGIFADDR, &ifr);
+	DataManager::SetValue("tw_ip_address", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
+	close(fd);
+#endif
+
 #ifdef TW_INCLUDE_INJECTTWRP
 	// Back up TWRP Ramdisk if needed:
 	TWPartition* Boot = PartitionManager.Find_Partition_By_Path("/boot");
@@ -363,6 +377,7 @@ int main(int argc, char **argv) {
 	// Launch the main GUI
 	gui_start();
 
+#ifndef TW_AMAZON_FIRETV
 #ifndef TW_OEM_BUILD
 	// Disable flashing of stock recovery
 	TWFunc::Disable_Stock_Recovery_Replace();
@@ -384,6 +399,7 @@ int main(int argc, char **argv) {
 		sync();
 		PartitionManager.UnMount_By_Path("/system", false);
 	}
+#endif
 #endif
 
 	// Reboot
