@@ -447,10 +447,50 @@ static int vk_modify(struct ev *e, struct input_event *ev)
     printf("EV: %s => type: %x  code: %x  value: %d\n", e->deviceName, ev->type, ev->code, ev->value);
 #endif
 
-	// Handle keyboard events, value of 1 indicates key down, 0 indicates key up
-	if (ev->type == EV_KEY) {
-		return 0;
-	}
+    // Handle keyboard events, value of 1 indicates key down, 0 indicates key up
+    if (ev->type == EV_KEY) {
+#ifdef TW_AMAZON_FIRETV
+        // Handle mouse emulator while not in the bootmenu
+        if (!in_bootmenu) {
+            /* Switch some key presses to mouse stuff */
+            switch (ev->code) {
+
+            case KEY_LEFT:
+            case KEY_RIGHT:
+            case KEY_UP:
+            case KEY_DOWN:
+                // Ignore keyup
+                if (ev->value == 0) { return true; }
+
+                ev->type = EV_REL;
+                ev->value = (ev->code == KEY_LEFT || ev->code == KEY_UP) ? -10 : 10;
+                ev->code = (ev->code == KEY_LEFT || ev->code == KEY_RIGHT) ? REL_X : REL_Y;
+                break;
+
+            case KEY_ENTER:
+            case KEY_ESC:
+                ev->code = (ev->code == KEY_ENTER) ? BTN_LEFT : BTN_SIDE;
+                ev->value = (ev->value > 0); // value > 0 for keydown
+                break;
+
+            case BTN_LEFT:
+                {
+                /* Clicks from the mouse emulator are getting ignored.
+                 * Generate an EV_MSC before them to mimmick what
+                 * happens from a real input device. */
+                struct input_event newev = *ev;
+                newev.type = EV_MSC;
+                newev.code = 4;
+                newev.value = 0x70000;
+                vk_modify(e, &newev);
+                break;
+                }
+            }
+        }
+#endif
+
+        return 0;
+    }
 
     if (ev->type == EV_ABS) {
         switch (ev->code) {
