@@ -186,7 +186,12 @@ int GUISlider::NotifyTouch(TOUCH_STATE state, int x, int y)
 		if (!dragging)
 			return 0;
 
+#ifndef TW_AMAZON_FIRETV
 		if (sCurTouchX >= mRenderX + mRenderW - sTouchW) {
+#else
+		// Disable sliding for firetv
+		{
+#endif
 			DataManager::Vibrate("tw_button_vibrate");
 			sAction->doActions();
 		}
