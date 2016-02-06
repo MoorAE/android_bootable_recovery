@@ -930,6 +930,11 @@ void DataManager::SetDefaultValues()
 
 	mValues.insert(make_pair("tw_has_adopted_storage", make_pair("0", 0)));
 
+#ifdef TW_AMAZON_FIRETV
+	mConstValues.insert(make_pair("fastscroll_w", "36"));
+	mConstValues.insert(make_pair("fastscroll_rectw", "36"));
+#endif
+
 	pthread_mutex_unlock(&m_valuesLock);
 }
 
