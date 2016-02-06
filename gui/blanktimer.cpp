@@ -36,7 +36,9 @@ blanktimer::blanktimer(void) {
 	pthread_mutex_init(&mutex, NULL);
 	setTime(0); // no timeout
 	state = kOn;
+#ifndef TW_NO_SCREEN_TIMEOUT
 	orig_brightness = getBrightness();
+#endif
 }
 
 bool blanktimer::isScreenOff() {
