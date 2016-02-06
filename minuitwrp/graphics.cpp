@@ -355,7 +355,11 @@ int gr_init(void)
 
     gl->activeTexture(gl, 0);
     gl->enable(gl, GGL_BLEND);
+#ifdef TW_AMAZON_FIRETV_SLOANE
+    gl->blendFunc(gl, GGL_SRC_ALPHA, GGL_DST_ALPHA);
+#else
     gl->blendFunc(gl, GGL_SRC_ALPHA, GGL_ONE_MINUS_SRC_ALPHA);
+#endif
 
     gr_flip();
     gr_flip();
