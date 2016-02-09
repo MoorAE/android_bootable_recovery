@@ -367,7 +367,9 @@ int main(int argc, char **argv) {
 		TWFunc::tw_reboot(rb_system);
 		return 0;
 	}
-#elif !defined(TW_OEM_BUILD)
+#endif
+
+#ifndef TW_OEM_BUILD
 	// Check if system has never been changed
 	TWPartition* sys = PartitionManager.Find_Partition_By_Path("/system");
 	TWPartition* ven = PartitionManager.Find_Partition_By_Path("/vendor");
@@ -395,7 +397,6 @@ int main(int argc, char **argv) {
 	// Launch the main GUI
 	gui_start();
 
-#ifndef TW_AMAZON_FIRETV
 #ifndef TW_OEM_BUILD
 	// Disable flashing of stock recovery
 	TWFunc::Disable_Stock_Recovery_Replace();
@@ -417,7 +418,6 @@ int main(int argc, char **argv) {
 		sync();
 		PartitionManager.UnMount_By_Path("/system", false);
 	}
-#endif
 #endif
 
 	// Reboot

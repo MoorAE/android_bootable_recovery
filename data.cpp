@@ -923,7 +923,11 @@ void DataManager::SetDefaultValues()
 	mConstValues.insert(make_pair("tw_has_mtp", "0"));
 	mConstValues.insert(make_pair("tw_mtp_enabled", "0"));
 #endif
+#ifdef TW_AMAZON_FIRETV
+	mConstValues.insert(make_pair("tw_mount_system_ro", "0"));
+#else
 	mValues.insert(make_pair("tw_mount_system_ro", make_pair("2", 1)));
+#endif
 	mValues.insert(make_pair("tw_never_show_system_ro_page", make_pair("0", 1)));
 	mValues.insert(make_pair("tw_language", make_pair(EXPAND(TW_DEFAULT_LANGUAGE), 1)));
 	LOGINFO("LANG: %s\n", EXPAND(TW_DEFAULT_LANGUAGE));
