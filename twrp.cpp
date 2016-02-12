@@ -350,22 +350,28 @@ int main(int argc, char **argv) {
 #endif
 
 #ifdef TW_AMAZON_FIRETV
-	struct stat sb;
-	DataManager::SetValue("tw_bootmenu_highlight",
-		(stat("/cache/bootmenu_recovery", &sb) == -1) ? "android" : "recovery");
-	ev_in_bootmenu(true);
-	if (gui_startPage("bootmenu", 1, 1) != 0)
+	int systemsize;
+	DataManager::GetValue(TW_BACKUP_SYSTEM_SIZE, systemsize);
+	if (systemsize > atoi(TW_MIN_SYSTEM_SIZE))
 	{
-		LOGERR("Failed to start bootmenu GUI page.\n");
-	}
-	ev_in_bootmenu(false);
-	string bootmenu_highlight;
-	DataManager::GetValue("tw_bootmenu_highlight", bootmenu_highlight);
-	if (bootmenu_highlight == "android")
-	{
-		close(creat("/cache/bypass_2ndinit", 0666));
-		TWFunc::tw_reboot(rb_system);
-		return 0;
+		// Only show the bootmenu if /system isn't tiny
+		struct stat sb;
+		DataManager::SetValue("tw_bootmenu_highlight",
+			(stat("/cache/bootmenu_recovery", &sb) == -1) ? "android" : "recovery");
+		ev_in_bootmenu(true);
+		if (gui_startPage("bootmenu", 1, 1) != 0)
+		{
+			LOGERR("Failed to start bootmenu GUI page.\n");
+		}
+		ev_in_bootmenu(false);
+		string bootmenu_highlight;
+		DataManager::GetValue("tw_bootmenu_highlight", bootmenu_highlight);
+		if (bootmenu_highlight == "android")
+		{
+			close(creat("/cache/bypass_2ndinit", 0666));
+			TWFunc::tw_reboot(rb_system);
+			return 0;
+		}
 	}
 #endif
 
