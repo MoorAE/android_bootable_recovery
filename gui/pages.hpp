@@ -86,16 +86,18 @@ protected:
 	COLOR mBackground;
 };
 
+struct LoadingContext;
+
 class PageSet
 {
 public:
-	PageSet(const char* xmlFile);
+	PageSet();
 	virtual ~PageSet();
 
 public:
+	int Load(LoadingContext& ctx, const std::string& filename);
 	int LoadLanguage(char* languageFile, ZipArchive* package);
-	int Load(ZipArchive* package, char* xmlFile, char* languageFile, char* baseLanguageFile);
-	int CheckInclude(ZipArchive* package, xml_document<> *parentDoc);
+	void MakeEmergencyConsoleIfNeeded();
 
 	Page* FindPage(std::string name);
 	int SetPage(std::string page);
@@ -115,17 +117,16 @@ public:
 	int SetKeyBoardFocus(int inFocus);
 	int NotifyVarChange(std::string varName, std::string value);
 
-	std::vector<xml_node<>*> styles;
 	void AddStringResource(std::string resource_source, std::string resource_name, std::string value);
 
 protected:
-	int LoadPages(xml_node<>* pages);
+	int LoadDetails(LoadingContext& ctx, xml_node<>* root);
+	int LoadPages(LoadingContext& ctx, xml_node<>* pages);
 	int LoadVariables(xml_node<>* vars);
 
 protected:
 	ResourceManager* mResources;
 	std::vector<Page*> mPages;
-	std::vector<xml_node<>*> templates;
 	Page* mCurrentPage;
 	std::vector<Page*> mOverlays; // Special case for popup dialogs and the lock screen
 };
@@ -185,6 +186,7 @@ protected:
 	static HardwareKeyboard *mHardwareKeyboard;
 	static bool mReloadTheme;
 	static std::string mStartPage;
+	static LoadingContext* currentLoadingContext;
 };
 
 #endif  // _PAGES_HEADER_HPP
