@@ -196,7 +196,10 @@ int main(int argc, char **argv) {
 				LOGERR("Unknown file system for /misc\n");
 			}
 		}
+		// Prevent automatic updates on FireTV
+#ifndef TW_AMAZON_FIRETV
 		get_args(&argc, &argv);
+#endif
 
 		int index, index2, len;
 		char* argptr;

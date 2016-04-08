@@ -468,8 +468,9 @@ static int vk_modify(struct ev *e, struct input_event *ev)
                 break;
 
             case KEY_ENTER:
+            case KEY_KPENTER:
             case KEY_ESC:
-                ev->code = (ev->code == KEY_ENTER) ? BTN_LEFT : BTN_SIDE;
+                ev->code = (ev->code == KEY_ESC) ? BTN_SIDE : BTN_LEFT;
                 ev->value = (ev->value > 0); // value > 0 for keydown
                 break;
 
