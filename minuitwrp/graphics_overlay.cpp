@@ -100,6 +100,7 @@ static minui_backend my_backend = {
 
 bool target_has_overlay(char *version)
 {
+#ifndef TW_AMAZON_FIRETV_BUELLER
     int ret;
     int mdp_version;
     bool overlay_supported = false;
@@ -120,6 +121,9 @@ bool target_has_overlay(char *version)
     }
 
     return overlay_supported;
+#else
+    return true;
+#endif
 }
 
 minui_backend* open_overlay() {
@@ -611,6 +615,11 @@ static GRSurface* overlay_init(minui_backend* backend) {
             gr_framebuffer.format = GGL_PIXEL_FORMAT_RGB_565;
         }
     }
+
+#ifdef TW_AMAZON_FIRETV_BUELLER
+    printf("Forcing pixel format: RGB_565\n");
+    gr_framebuffer.format = GGL_PIXEL_FORMAT_RGB_565;
+#endif
 
     frame_size = fi.line_length * vi.yres;
 

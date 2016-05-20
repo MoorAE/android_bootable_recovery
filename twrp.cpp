@@ -353,11 +353,14 @@ int main(int argc, char **argv) {
 #endif
 
 #ifdef TW_AMAZON_FIRETV
+	char boot_partition[PROPERTY_VALUE_MAX];
 	int systemsize;
+	property_get("ro.boot.partition", boot_partition, "boot");
 	DataManager::GetValue(TW_BACKUP_SYSTEM_SIZE, systemsize);
-	if (systemsize > atoi(TW_MIN_SYSTEM_SIZE))
+	if (systemsize > atoi(TW_MIN_SYSTEM_SIZE) &&
+		strcmp(boot_partition, "boot") == 0)
 	{
-		// Only show the bootmenu if /system isn't tiny
+		// Only show the bootmenu if /system isn't tiny and not booting directly to recovery
 		struct stat sb;
 		DataManager::SetValue("tw_bootmenu_highlight",
 			(stat("/cache/bootmenu_recovery", &sb) == -1) ? "android" : "recovery");
