@@ -589,6 +589,14 @@ static GRSurface* overlay_init(minui_backend* backend) {
            vi.green.offset, vi.green.length,
            vi.blue.offset, vi.blue.length);
 
+#ifdef TW_AMAZON_FIRETV_BUELLER
+    // Fix 720p on bueller
+    if (vi.xres == 1280 && vi.yres == 720)
+    {
+        fi.line_length = ALIGN(vi.xres, 32) * 4;
+    }
+#endif
+
     gr_framebuffer.width = vi.xres;
     gr_framebuffer.height = vi.yres;
     gr_framebuffer.row_bytes = fi.line_length;
