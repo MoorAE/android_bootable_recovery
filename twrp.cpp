@@ -113,6 +113,10 @@ int main(int argc, char **argv) {
 	property_set("ro.twrp.boot", "1");
 	property_set("ro.twrp.version", TW_VERSION_STR);
 
+	// Check for and run startup script if script exists
+	TWFunc::check_and_run_script("/sbin/runatboot.sh", "boot");
+	TWFunc::check_and_run_script("/sbin/postrecoveryboot.sh", "boot");
+
 	time_t StartupTime = time(NULL);
 	printf("Starting TWRP %s on %s (pid %d)\n", TW_VERSION_STR, ctime(&StartupTime), getpid());
 
@@ -260,10 +264,6 @@ int main(int argc, char **argv) {
 	} else {
 		printf("twrp.crash_counter=%d\n", crash_counter);
 	}
-
-	// Check for and run startup script if script exists
-	TWFunc::check_and_run_script("/sbin/runatboot.sh", "boot");
-	TWFunc::check_and_run_script("/sbin/postrecoveryboot.sh", "boot");
 
 #ifdef TW_AMAZON_FIRETV
 	// DHCP runs in postrecoveryboot.sh, get the ip address
