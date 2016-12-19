@@ -1855,15 +1855,20 @@ int GUIAction::setlanguage(std::string arg __unused)
 #ifdef TW_AMAZON_FIRETV
 int GUIAction::bootmenu(std::string arg __unused)
 {
+#ifdef TW_AMAZON_FIRETV_MONTOYA
+	int seconds = 30;
+#else
+	int seconds = 5;
+#endif
 	DataManager::SetValue("ui_progress_frames", 0);
 
 	// 100% shows as a weird color, this fixes it
 	DataManager::SetProgress(0);
 	usleep(30000);
 
-	for (int i = 5; i >= 0; i--)
+	for (int i = seconds; i >= 0; i--)
 	{
-		DataManager::SetProgress(i / 5.0);
+		DataManager::SetProgress(i / (float)seconds);
 		usleep(1000000);
 	}
 

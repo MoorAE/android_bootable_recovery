@@ -73,6 +73,9 @@ endif
 ifneq ($(TW_AMAZON_FIRETV),)
     LOCAL_CFLAGS += -DTW_AMAZON_FIRETV
 endif
+ifneq ($(TW_AMAZON_FIRETV_MONTOYA),)
+    LOCAL_CFLAGS += -DTW_AMAZON_FIRETV_MONTOYA
+endif
 
 LOCAL_C_INCLUDES += bionic system/core/libpixelflinger/include
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 23; echo $$?),0)
